@@ -1,0 +1,35 @@
+services:
+  air2.0-dev:
+    image: docker-hub.saico.systems/cpp/dev/server:1.6-ubuntu22.04-ortools9.9
+    container_name: air2.0-dev
+    restart: unless-stopped
+    working_dir: /home/ubuntu/air2.0/
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    ports:
+      - 4210:4210
+    volumes:
+      - .:/home/ubuntu/air2.0/
+
+  air2.0-min:
+    image: docker-hub.saico.systems/airouting2/algorithms-server-development:latest
+    container_name: air2.0-min
+    restart: unless-stopped
+    pull_policy: always
+    working_dir: /app/
+    env_file:
+      - .env
+    ports:
+      - 4210:4210
+
+  logspout:
+    image: gliderlabs/logspout:latest
+    container_name: logspout
+    hostname: logspout
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: syslog+tcp://172.16.2.27:2255
+    restart: unless-stopped
